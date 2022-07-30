@@ -7,6 +7,8 @@ services:
       ISUCON_DB_USER: isucon
       ISUCON_DB_PASSWORD: isucon
       ISUCON_DB_NAME: isuports
+      GOOGLE_CLOUD_PROJECT: triple-innocent
+      GOOGLE_APPLICATION_CREDENTIALS: /home/isucon/credentials/service-account-file.json
     network_mode: host
     volumes:
       - /home/isucon/webapp/tenant_db:/home/isucon/webapp/tenant_db
@@ -14,4 +16,5 @@ services:
       - /home/isucon/webapp/public.pem:/home/isucon/webapp/public.pem:ro
       - /home/isucon/initial_data:/home/isucon/initial_data
       - /home/isucon/tmp:/home/isucon/tmp
+      - /home/isucon/credentials:/home/isucon/credentials
     init: true
