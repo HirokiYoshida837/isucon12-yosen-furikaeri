@@ -32,6 +32,8 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"go.opentelemetry.io/otel"
 
+	"github.com/nhatthm/otelsql"
+
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
@@ -74,7 +76,21 @@ func connectAdminDB() (*sqlx.DB, error) {
 	config.DBName = getEnv("ISUCON_DB_NAME", "isuports")
 	config.ParseTime = true
 	dsn := config.FormatDSN()
-	return sqlx.Open("mysql", dsn)
+	// return sqlx.Open("mysql", dsn)
+
+	// https://github.com/nhatthm/otelsql#trace-query
+	driverName, err := otelsql.Register("mysql",
+		otelsql.TraceQueryWithArgs(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	db1, err := sql.Open(driverName, dsn)
+	if err != nil {
+		return nil, err
+	}
+	return sqlx.NewDb(db1, "mysql"), nil
+
 }
 
 // テナントDBのパスを返す
